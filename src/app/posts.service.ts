@@ -40,7 +40,8 @@ export class PostsService {
         'https://ng-complete-guide-dc2cf-default-rtdb.europe-west1.firebasedatabase.app/posts.json',
         {
           headers: new HttpHeaders({ 'Custom-Header': 'Hello' }),
-          params: searchParamas
+          params: searchParamas,
+          responseType: 'json'
         }
       )
       .pipe(
@@ -64,7 +65,8 @@ export class PostsService {
     return this.http.delete(
       'https://ng-complete-guide-dc2cf-default-rtdb.europe-west1.firebasedatabase.app/posts.json',
       {
-        observe: 'events'
+        observe: 'events',
+        responseType: 'text'
       }
     ).pipe(
       tap(event => {
