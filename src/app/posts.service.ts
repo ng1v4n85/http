@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { map, catchError } from 'rxjs/operators';
+import { HttpClient, HttpHeaders, HttpParams, HttpEventType } from '@angular/common/http';
+import { map, catchError, tap } from 'rxjs/operators';
 import { Subject, throwError } from 'rxjs';
 
 import { Post } from './post.model';
@@ -15,8 +15,11 @@ export class PostsService {
     const postData: Post = { title: title, content: content };
     this.http
       .post<{ name: string }>(
-        'https://ng-complete-guide-dc2cf-default-rtdb.europe-west1.firebasedatabase.app',
-        postData
+        'https://ng-complete-guide-dc2cf-default-rtdb.europe-west1.firebasedatabase.app/posts.json',
+        postData,
+        {
+          observe: 'response'
+        }
       )
       .subscribe(
         responseData => {
@@ -59,7 +62,20 @@ export class PostsService {
 
   deletePosts() {
     return this.http.delete(
-      'https://ng-complete-guide-dc2cf-default-rtdb.europe-west1.firebasedatabase.app/posts.json'
-    );
+      'https://ng-complete-guide-dc2cf-default-rtdb.europe-west1.firebasedatabase.app/posts.json',
+      {
+        observe: 'events'
+      }
+    ).pipe(
+      tap(event => {
+        console.log(event);
+        if (event.type === HttpEventType.Sent) {
+          // ...
+        }
+        if (event.type === HttpEventType.Response) {
+          console.log(event.body);
+        }
+      })
+      );
   }
 }
