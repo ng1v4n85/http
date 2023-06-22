@@ -1,14 +1,15 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
-import { Post } from './post.model';
-import { PostsService } from './post.service';
 import { Subscription } from 'rxjs';
+
+import { Post } from './post.model';
+import { PostsService } from './posts.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],
+  styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit, OnDestroy {
   loadedPosts: Post[] = [];
@@ -24,12 +25,16 @@ export class AppComponent implements OnInit, OnDestroy {
     });
 
     this.isFetching = true;
-    this.postsService.fetchPosts().subscribe(posts => {
-      this.isFetching = false;
-      this.loadedPosts = posts;
-    }, error => {
-      this.error = error.message;
-    });
+    this.postsService.fetchPosts().subscribe(
+      posts => {
+        this.isFetching = false;
+        this.loadedPosts = posts;
+      },
+      error => {
+        this.isFetching = false;
+        this.error = error.message;
+      }
+    );
   }
 
   onCreatePost(postData: Post) {
@@ -40,13 +45,17 @@ export class AppComponent implements OnInit, OnDestroy {
   onFetchPosts() {
     // Send Http request
     this.isFetching = true;
-    this.postsService.fetchPosts().subscribe(posts => {
-      this.isFetching = false;
-      this.loadedPosts = posts;
-    }, error => {
+    this.postsService.fetchPosts().subscribe(
+      posts => {
+        this.isFetching = false;
+        this.loadedPosts = posts;
+      },
+      error => {
+        this.isFetching = false;
         this.error = error.message;
         console.log(error);
-    });
+      }
+    );
   }
 
   onClearPosts() {
@@ -56,7 +65,11 @@ export class AppComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy(): void {
+  onHandleError() {
+    this.error = null;
+  }
+
+  ngOnDestroy() {
     this.errorSub.unsubscribe();
   }
 }
