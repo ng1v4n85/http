@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { map, catchError } from 'rxjs/operators';
 import { Subject, throwError } from 'rxjs';
 
@@ -29,11 +29,15 @@ export class PostsService {
   }
 
   fetchPosts() {
+    let searchParamas = new HttpParams();
+    searchParamas = searchParamas.append('print','pretty');
+    searchParamas = searchParamas.append('custom','key');
     return this.http
       .get<{ [key: string]: Post }>(
         'https://ng-complete-guide-dc2cf-default-rtdb.europe-west1.firebasedatabase.app/posts.json',
         {
-          headers: new HttpHeaders({ 'Custom-Header': 'Hello' })
+          headers: new HttpHeaders({ 'Custom-Header': 'Hello' }),
+          params: searchParamas
         }
       )
       .pipe(
