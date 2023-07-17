@@ -1,5 +1,10 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams, HttpEventType } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpHeaders,
+  HttpParams,
+  HttpEventType,
+} from '@angular/common/http';
 import { map, catchError, tap } from 'rxjs/operators';
 import { Subject, throwError } from 'rxjs';
 
@@ -18,14 +23,14 @@ export class PostsService {
         'https://ng-complete-guide-dc2cf-default-rtdb.europe-west1.firebasedatabase.app/posts.json',
         postData,
         {
-          observe: 'response'
+          observe: 'response',
         }
       )
       .subscribe(
-        responseData => {
+        (responseData) => {
           console.log(responseData);
         },
-        error => {
+        (error) => {
           this.error.next(error.message);
         }
       );
@@ -33,19 +38,19 @@ export class PostsService {
 
   fetchPosts() {
     let searchParamas = new HttpParams();
-    searchParamas = searchParamas.append('print','pretty');
-    searchParamas = searchParamas.append('custom','key');
+    searchParamas = searchParamas.append('print', 'pretty');
+    searchParamas = searchParamas.append('custom', 'key');
     return this.http
       .get<{ [key: string]: Post }>(
         'https://ng-complete-guide-dc2cf-default-rtdb.europe-west1.firebasedatabase.app/posts.json',
         {
           headers: new HttpHeaders({ 'Custom-Header': 'Hello' }),
           params: searchParamas,
-          responseType: 'json'
+          responseType: 'json',
         }
       )
       .pipe(
-        map(responseData => {
+        map((responseData) => {
           const postsArray: Post[] = [];
           for (const key in responseData) {
             if (responseData.hasOwnProperty(key)) {
@@ -54,7 +59,7 @@ export class PostsService {
           }
           return postsArray;
         }),
-        catchError(errorRes => {
+        catchError((errorRes) => {
           // Send to analytics server
           return throwError(errorRes);
         })
@@ -62,22 +67,24 @@ export class PostsService {
   }
 
   deletePosts() {
-    return this.http.delete(
-      'https://ng-complete-guide-dc2cf-default-rtdb.europe-west1.firebasedatabase.app/posts.json',
-      {
-        observe: 'events',
-        responseType: 'text'
-      }
-    ).pipe(
-      tap(event => {
-        console.log(event);
-        if (event.type === HttpEventType.Sent) {
-          // ...
+    return this.http
+      .delete(
+        'https://ng-complete-guide-dc2cf-default-rtdb.europe-west1.firebasedatabase.app/posts.json',
+        {
+          observe: 'events',
+          responseType: 'text',
         }
-        if (event.type === HttpEventType.Response) {
-          console.log(event.body);
-        }
-      })
+      )
+      .pipe(
+        tap((event) => {
+          console.log(event);
+          if (event.type === HttpEventType.Sent) {
+            // ...
+          }
+          if (event.type === HttpEventType.Response) {
+            console.log(event.body);
+          }
+        })
       );
   }
 }
